@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Mission6_celder20.Models;
 using System;
@@ -11,14 +12,12 @@ namespace Mission6_celder20.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private MovieContext _blahContext { get; set; }
+        private MovieContext blahContext { get; set; }
 
         //Constructor
-        public HomeController(ILogger<HomeController> logger, MovieContext coolName)
+        public HomeController(MovieContext coolName)
         {
-            _logger = logger;
-            _blahContext = coolName;
+            blahContext = coolName;
         }
 
         public IActionResult Index()
@@ -30,37 +29,79 @@ namespace Mission6_celder20.Controllers
             return View("Podcasts");
         }
         [HttpGet]
-        public IActionResult FillOutMovieForm()
+        public IActionResult MoviesApplication()
         {
+            ViewBag.Categories = blahContext.Categories.ToList();
+
             return View("MoviesApplication");
         }
 
         [HttpPost]
-        public IActionResult FillOutMovieForm(ApplicationResponse ar)
+        public IActionResult MoviesApplication(ApplicationResponse ar)
         {
             //this first if statement is for when all the correct fields are filled out
             if (ModelState.IsValid)
             {
-                _blahContext.Add(ar);
-                _blahContext.SaveChanges();
+                blahContext.Add(ar);
+                blahContext.SaveChanges();
                 return View("Confirmation", ar);
             }
             else
             {
-                //if all different forms are not filled in, it returns this view
-                return View("ErrorMessage");
+                //if all different forms are not filled in, it returns this view and shoots out the error messages associated with each required field
+                ViewBag.Categories = blahContext.Categories.ToList();
+
+                return View();
             }
         }
 
-        public IActionResult Privacy()
+        public IActionResult MovieList()
         {
-            return View();
+            //Order the database by movie title
+            var applications = blahContext.Responses
+                .Include(x => x.Category)
+                .OrderBy(x => x.Title)
+                .ToList();
+
+            return View(applications);
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        //Creating actions that can edit past entries through a get and post
+        [HttpGet]
+        public IActionResult Edit(int appid)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            ViewBag.Categories = blahContext.Categories.ToList();
+
+            //Creating an object of application response type
+            var application = blahContext.Responses.Single(x => x.AppId == appid);
+
+            return View("MoviesApplication", application);
         }
+        [HttpPost]
+        public IActionResult Edit (ApplicationResponse appre)
+        {
+            blahContext.Update(appre);
+            blahContext.SaveChanges();
+
+            return RedirectToAction("MovieList");
+        }
+
+        //Creating actions that can delete records through a get and post
+        [HttpGet]
+        public IActionResult Delete(int appid)
+        {
+            var application = blahContext.Responses.Single(x => x.AppId == appid);
+
+            return View(application);
+        }
+        [HttpPost]
+        public IActionResult Delete(ApplicationResponse appresp)
+        {
+            blahContext.Responses.Remove(appresp);
+            blahContext.SaveChanges();
+            
+            return RedirectToAction("MovieList");
+        }
+
     }
 }

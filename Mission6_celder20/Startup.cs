@@ -57,7 +57,7 @@ namespace Mission6_celder20
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{appid?}");
             });
         }
     }

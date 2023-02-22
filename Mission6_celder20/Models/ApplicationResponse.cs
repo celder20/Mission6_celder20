@@ -13,13 +13,15 @@ namespace Mission6_celder20.Models
         [Key]
         [Required]
         public int AppId { get; set; }
-        [Required]
-        public string Category { get; set; }
-        [Required]
+        
+        [Required(ErrorMessage = "You have to enter a movie title!")]
         public string Title { get; set; }
+
+        //There were no movies before the 1850s
         [Required]
+        [Range(1850, 2023, ErrorMessage = "Please enter a year between 1850 and 2023.")]
         public int Year { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Please enter a director name.")]
         public string Director { get; set; }
         [Required]
         public string Rating { get; set; }
@@ -28,11 +30,11 @@ namespace Mission6_celder20.Models
         public string LentTo { get; set; }
         [MaxLength(25)]
         public string Notes { get; set; }
-        
-        
 
+        //Build foreign key relationship
+        [Required]
+        public int CategoryId { get; set; }
 
-
-
+        public Category Category { get; set; }
     }
 }

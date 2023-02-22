@@ -3,15 +3,15 @@
 }
 
 <div class="text-center">
-    <h2 class="display-4">This is the home page for the Joel Hilton Film Collection! Here is a photo of him looking beautiful below.
-    Click the link below the photo to submit a movie review!</h2>
+    <h4>This is the home page for the Joel Hilton Film Collection! Here is a photo of him looking beautiful below.
+    Click the link below the photo or the link in the navigation bar to submit a movie!</h4>
     
     @*Included image for the home page*@
     <br />
     <img src="~/img/JoelHiltonHeadshot.jpg" />
     <br />
 
-    @*This is the link to go to the movie page where users will input movie info and standard reviews*@
-    <a asp-controller="Home" asp-action="FillOutMovieForm">This is the link to the page where you can submit movies</a>
-
+    @*This is the link to go to the movie page where users will input movie info for their favorite movies*@
+    <a asp-controller="Home" asp-action="MoviesApplication">This is the link to the page where you can submit movies</a>
 </div>
+
